@@ -16,13 +16,20 @@ def pytest_terminal_summary(terminalreporter, exitstatus):
         all_tests = all_tests + terminalreporter.stats['passed']
     if ('failed' in terminalreporter.stats):
         all_tests = all_tests + terminalreporter.stats['failed']
-
+    passed_count = 0
+    total_score = 0
+    total_max_score = 0
     for s in all_tests:
         output = ''
         score = s.max_score
-        if (s.outcome == 'failed'):
+        if s.outcome == 'failed':
             score = 0
             output = str(s.longrepr.chain[0][0].reprentries[0])
+        else:
+            passed_count += 1
+
+        total_score += score
+        total_max_score += s.max_score
 
         json_results["tests"].append(
             {
@@ -36,3 +43,6 @@ def pytest_terminal_summary(terminalreporter, exitstatus):
 
     with open('results.json', 'w') as results:
         results.write(json.dumps(json_results, indent=4))
+    with open('summary.txt', 'w') as summary:
+        summary.write(f"Passed: {passed_count}/{len(all_tests)}\n")
+        summary.write(f"Total Score: {total_score}/{total_max_score}\n")
