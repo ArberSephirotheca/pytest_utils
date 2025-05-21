@@ -40,9 +40,12 @@ def pytest_terminal_summary(terminalreporter, exitstatus):
                 'visibility': s.visibility
             }
         )
-
+    json_results["tests"].append({
+        'score': 0,
+        'max_score': 0,
+        'name': 'summary',
+        'output': f"Passed: {passed_count}/{len(all_tests)}\nTotal Score: {total_score}/{total_max_score}",
+        'visibility': 'visible'
+    })
     with open('results.json', 'w') as results:
         results.write(json.dumps(json_results, indent=4))
-    with open('summary.txt', 'w') as summary:
-        summary.write(f"Passed: {passed_count}/{len(all_tests)}\n")
-        summary.write(f"Total Score: {total_score}/{total_max_score}\n")
